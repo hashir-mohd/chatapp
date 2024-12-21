@@ -1,0 +1,54 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL") // Use an environment variable for the MongoDB connection string
+}
+
+model User {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  username     String         @unique
+  email        String         @unique
+  fullName     String
+  avatar       String?
+  coverImage   String?
+  description  String?        @default("")
+  password     String
+  refreshToken String?
+  messages     Message[]
+  userRooms    UserChatRoom[]
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+}
+
+model ChatRoom {
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  messages  Message[]
+  roomUsers UserChatRoom[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model Message {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  content    String
+  senderId   String   @db.ObjectId // Add @db.ObjectId to match User.id
+  sender     User     @relation(fields: [senderId], references: [id])
+  chatRoomId String   @db.ObjectId // Add @db.ObjectId to match ChatRoom.id
+  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model UserChatRoom {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  chatRoomId String   @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id])
+  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
+}

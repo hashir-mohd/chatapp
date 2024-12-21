@@ -1,47 +1,46 @@
-import prisma from "./prismaconnect/prisma.js";
 import dotenv from "dotenv";
+import connectDB from "./db/index.js";
 import express from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
-
-
-dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 8000;
+dotenv.config();
 
-async function startServer(){
-    try {
-        await prisma.$connect();
-        console.log("Connected to the mongodb with prisma");
-        app.listen(PORT, ()=>{
-            console.log(`Server is running on port ${PORT}`);
-        })
-    } catch (error) {
-        console.log("Failed to connect to mongodb", error);
-        
-    }
-}
-startServer();
+
+
+const port = process.env.PORT || 8000;
+
+app.on("error", (error) => {
+  console.log("Server Run Failed :", error);
+  throw error;
+});
+
+
+
+
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  })
+);
 
 app.use(express.json({ limit: "50mb" }));
-app.use(cookieParser());
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(express.static("public"));
+app.use(cookieParser());
+
 app.use((req, res, next) => {
   res.setHeader("Content-Type", "application/json");
   next();
 });
-
-
-import userRouter from "./routes/user.routes.js";
-import postRouter from "./routes/post.routes.js";
-
-app.use("/users", userRouter);
-app.use("/posts", postRouter);
-
-
-
-
-
-
-
+connectDB()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`  ⚙️   Server is running at port : ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.log("MongoDB Connection Failed !! ", err);
+  });

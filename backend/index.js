@@ -3,20 +3,14 @@ import connectDB from "./db/index.js";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import {server, app} from "./socket/index.js";
 
-const app = express();
+// const app = express();
 dotenv.config();
 
 
 
 const port = process.env.PORT || 8000;
-
-app.on("error", (error) => {
-  console.log("Server Run Failed :", error);
-  throw error;
-});
-
-
 
 
 app.use(
@@ -37,10 +31,14 @@ app.use((req, res, next) => {
 });
 connectDB()
   .then(() => {
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log(`  ⚙️   Server is running at port : ${port}`);
     });
   })
   .catch((err) => {
     console.log("MongoDB Connection Failed !! ", err);
   });
+
+
+import userRouter from "./routes/user.routes.js";
+app.use('/users', userRouter);

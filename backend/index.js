@@ -39,6 +39,8 @@ connectDB()
     console.log("MongoDB Connection Failed !! ", err);
   });
 
-
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
 import userRouter from "./routes/user.routes.js";
 app.use('/users', userRouter);

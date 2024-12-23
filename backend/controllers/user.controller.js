@@ -197,7 +197,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
-  console.log("inside get current user", req.user);
+  
   
   return res
     .status(200)

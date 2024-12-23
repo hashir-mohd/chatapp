@@ -6,6 +6,7 @@ import {
   logout,
   setOnlineUser,
   setSocketConnection,
+  setToken,
   setUser,
 } from "../features/userSlice";
 import Sidebar from "../components/Sidebar";
@@ -25,19 +26,16 @@ const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // console.log("user", user);
   const fetchUserDetails = async () => {
     try {
       const response = await API.get("/users/current-user");
+      dispatch(setUser(response.data.data.user));
+      dispatch(setToken(localStorage.getItem("token")));
 
-      console.log("current user Details", response);
-
-      // dispatch(setUser(response.data.data));
-
-      if (response.data.data.logout) {
-        dispatch(logout());
-        navigate("/login");
-      }
+      // if (response.data.data.logout) {
+      //   dispatch(logout());
+      //   navigate("/login");
+      // }
     } catch (error) {
       console.log("error", error);
     }
@@ -48,25 +46,24 @@ const Home = () => {
   }, []);
 
   /***socket connection */
-  useEffect(() => {
-    const socketConnection = io("http://localhost:3000", {
-      withCredentials: true,
-      auth: {
-        token: localStorage.getItem("token"),
-      },
-    });
+   useEffect(() => {
+     const socketConnection = io("http://localhost:3000", {
+       auth: {
+         token: localStorage.getItem("token"),
+       },
+     });
 
-    socketConnection.on("onlineUser", (data) => {
-      console.log(data);
-      dispatch(setOnlineUser(data));
-    });
+     socketConnection.on("onlineUser", (data) => {
+       console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",data);
+       dispatch(setOnlineUser(data));
+     });
 
-    // dispatch(setSocketConnection(socketConnection));
+     dispatch(setSocketConnection(socketConnection));
 
-    return () => {
-      socketConnection.disconnect();
-    };
-  }, []);
+     return () => {
+       socketConnection.disconnect();
+     };
+   }, []);
 
   const basePath = location.pathname === "/";
   return (

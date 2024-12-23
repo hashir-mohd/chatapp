@@ -1,10 +1,10 @@
 import React, { useState,useEffect } from "react";
 import SearchUser from "./SearchUser";
 import { use } from "react";
-import { IoChatbubbleEllipses } from "react-icons/io5";
+
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { FaUserPlus } from "react-icons/fa";
+
 import { FiArrowUpLeft } from "react-icons/fi";
 
 function Sidebar() {

@@ -18,10 +18,12 @@ const io = new Server(server, {
   },
 });
 
+
+
 const onlineUser = new Set();
 
 io.on("connection", async (socket) => {
-  console.log("user connected", socket.id);
+  
 
   // const token = socket.handshake.auth.token;
   const token = socket.handshake.auth.token;
@@ -36,11 +38,11 @@ io.on("connection", async (socket) => {
   const user = await User.findById(decodedToken?._id).select(
     "-password -refreshToken"
   );
-  console.log(user);
   onlineUser.add(user?._id?.toString());
   socket.join(user?._id.toString());
 
   io.emit("onlineUser", Array.from(onlineUser));
+
 
   //message page
   socket.on("message-page", async (userId) => {
@@ -49,7 +51,7 @@ io.on("connection", async (socket) => {
     );
     const payload = {
       _id: userDetails._id,
-      name: userDetails.username,
+      username: userDetails.username,
       email: userDetails.email,
       profilePic: userDetails.profilePic,
       online: onlineUser.has(userId),
@@ -69,6 +71,8 @@ io.on("connection", async (socket) => {
 
   //socket for new message
   socket.on("new-message", async (data) => {
+    
+    
     let conversation = await ConversationModel.findOne({
       $or: [
         { sender: data?.sender, receiver: data?.receiver },

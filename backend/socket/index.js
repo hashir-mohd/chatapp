@@ -5,14 +5,16 @@ import {
   MessageModel,
   ConversationModel,
 } from "../models/conversation.model.js";
-import {Server} from "socket.io";
+import { Server } from "socket.io";
+import jwt from "jsonwebtoken";
+import { getConversation } from "../controllers/chat.controller.js";
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN,
-    Credentials: true,
+    origin: "http://localhost:5173",
+    credentials: true,
   },
 });
 
@@ -22,11 +24,12 @@ io.on("connection", async (socket) => {
   console.log("user connected", socket.id);
 
   // const token = socket.handshake.auth.token;
-  const token =
-    req.cookies?.accessToken ||
-    req.header("Authorization")?.replace("Bearer ", "");
+  const token = socket.handshake.auth.token;
+
   if (!token) {
-    return res.status(401).send("Access Denied");
+    return socket.emit("error", {
+      message: "Access Denied: No token provided",
+    });
   }
   const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
@@ -151,7 +154,4 @@ io.on("connection", async (socket) => {
   });
 });
 
-export {
-    server,
-    app
-};
+export { server, app };

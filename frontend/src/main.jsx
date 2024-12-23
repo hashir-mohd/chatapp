@@ -8,6 +8,8 @@ import { Provider } from "react-redux";
 import { store } from "./store/store.js";
 import Register from "./pages/Register.jsx";
 import Login from './pages/Login.jsx';
+import Home from "./pages/Home.jsx";
+import MessagePage from "./components/MessagePage.jsx";
 
 
 const router = createBrowserRouter([
@@ -22,6 +24,16 @@ const router = createBrowserRouter([
       {
         path:"login",
         element:<Login/>
+      },
+      {
+        path:"",
+        element :<Home/>,
+        children:[
+          {
+            path:":userId",
+            element:<MessagePage/>
+          }
+        ]
       }
     ],
   },

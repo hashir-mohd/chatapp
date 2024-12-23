@@ -1,5 +1,4 @@
-import { ConversationModel } from "../models/conversation.model";
-import { MessageModel } from "../models/message.model";
+import { ConversationModel, MessageModel } from "../models/conversation.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const getConversation = asyncHandler(async (currentUserId) => {

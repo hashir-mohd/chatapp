@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setToken, setUser } from "../features/userSlice";
 import { IoClose } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
@@ -35,19 +35,18 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      
-
       const response = await API.post("/users/login", data);
-      
+      console.log(response);
 
       if (response.data.statusCode === 200) {
         toast.success("Login successful");
-        // dispatch(setToken(data?.data?.token));
-        localStorage.setItem("token", response?.data?.token);
+        dispatch(setToken(response?.data?.data?.accessToken));
+        localStorage.setItem("token", response?.data?.data?.accessToken);
         setData({
           usernameOrEmail: "",
           password: "",
         });
+
         navigate("/");
       }
     } catch (error) {

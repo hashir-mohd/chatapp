@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { data, Link, useParams } from "react-router-dom";
+import { AiOutlineCheck, AiFillCheckCircle } from "react-icons/ai";
 
 import { HiDotsVertical } from "react-icons/hi";
 import { FaAngleLeft } from "react-icons/fa6";
@@ -25,7 +26,7 @@ const MessagePage = () => {
     online: false,
     _id: "",
   });
-  console.log(dataUser);
+  // console.log(dataUser);
 
   const [message, setMessage] = useState({
     text: "",
@@ -35,6 +36,8 @@ const MessagePage = () => {
   const [loading, setLoading] = useState(false);
   const [allMessage, setAllMessage] = useState([]);
   const currentMessage = useRef(null);
+  console.log("all messages are ",allMessage);  
+  
 
   useEffect(() => {
     if (currentMessage.current) {
@@ -56,7 +59,7 @@ const MessagePage = () => {
       });
 
       socketConnection.on("message", (data) => {
-        console.log("message data", data);
+        // console.log("message data", data);
         setAllMessage(data);
       });
     }
@@ -146,12 +149,30 @@ const MessagePage = () => {
                 <div
                   className={` p-1 py-1 rounded w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${
                     user._id === msg?.msgByUserId
-                      ? "ml-auto bg-teal-100"
+                      ? "ml-auto bg-teal-200"
                       : "bg-white"
                   }`}
                 >
-                  <div className="w-full relative"></div>
-                  <p className="px-2">{msg.text}</p>
+                  
+                  <p className="px-2 flex justify-center items-center">
+                    {msg.text}
+                    <div>
+                      {user._id === msg?.msgByUserId ? (
+                        msg.seen ? (
+                          <p className="text-xs ml-auto w-fit flex items-center gap-1">
+                            <AiFillCheckCircle className="text-green-500" />
+                          </p>
+                        ) : (
+                          <p className="text-xs ml-auto w-fit flex items-center gap-1">
+                            <AiOutlineCheck className="text-gray-500" />
+                          </p>
+                        )
+                      ) : (
+                        <div></div>
+                      )}
+                    </div>
+                  </p>
+
                   <p className="text-xs ml-auto w-fit">
                     {moment(msg.createdAt).format("hh:mm")}
                   </p>

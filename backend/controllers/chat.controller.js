@@ -21,7 +21,7 @@ export const getConversation = async (currentUserId) => {
           return preve;
         }
       }, 0);
-      // console.log(conversation);
+      
 
       return {
         _id: conv?._id,

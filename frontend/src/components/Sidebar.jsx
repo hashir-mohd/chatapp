@@ -13,15 +13,14 @@ import { logout } from "../features/userSlice";
 
 
 function Sidebar() {
+  const user = useSelector((state) => state?.user);
+  const [allUser, setAllUser] = useState([]);
   const [openSearchUser, setOpenSearchUser] = useState(false);
-  const user = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const socketConnection = useSelector(
     (state) => state?.user?.socketConnection
   );
-  const [allUser, setAllUser] = useState([]);
-  console.log("allUser", allUser);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   
   const handleLogout = () => {
     dispatch(logout());
@@ -31,12 +30,10 @@ function Sidebar() {
 
   useEffect(() => {
     if (socketConnection) {
-      
-      
       socketConnection.emit("sidebar", user._id);
 
       socketConnection.on("conversation", (data) => {
-        console.log("conversation", data);
+        
 
         const conversationUserData = data.map((conversationUser, index) => {
           if (
@@ -149,7 +146,7 @@ function Sidebar() {
                   </div>
                 </div>
                 {Boolean(conv?.unseenMsg) && (
-                  <p className="text-xs w-6 h-6 flex justify-center items-center ml-auto p-1 bg-primary text-white font-semibold rounded-full">
+                  <p className="text-xs bg-black w-6 h-6 flex justify-center items-center ml-auto p-1 bg-primary text-white font-semibold rounded-full">
                     {conv?.unseenMsg}
                   </p>
                 )}

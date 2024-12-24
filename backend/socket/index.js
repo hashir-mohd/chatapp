@@ -19,15 +19,9 @@ const io = new Server(server, {
   },
 });
 
-
-
 const onlineUser = new Set();
 
-
-
 io.on("connection", async (socket) => {
-  
-
   // const token = socket.handshake.auth.token;
   const token = socket.handshake.auth.token;
 
@@ -47,7 +41,7 @@ io.on("connection", async (socket) => {
   io.emit("onlineUser", Array.from(onlineUser));
 
   socket.on("message-page", async (userId) => {
-    console.log("userId", userId);
+    // console.log("userId", userId);
     const userDetails = await User.findById(userId).select("-password");
 
     const payload = {
@@ -75,8 +69,6 @@ io.on("connection", async (socket) => {
   //new message
   socket.on("new-message", async (data) => {
     //check conversation is available both user
-    
-    
 
     let conversation = await ConversationModel.findOne({
       $or: [
@@ -128,20 +120,17 @@ io.on("connection", async (socket) => {
     const conversationSender = await getConversation(data?.sender);
     const conversationReceiver = await getConversation(data?.receiver);
 
-    
     io.to(data?.sender).emit("conversation", conversationSender);
     io.to(data?.receiver).emit("conversation", conversationReceiver);
   });
 
   //sidebar
   socket.on("sidebar", async (currentUserId) => {
-    console.log("current user", currentUserId);
-    
-
+    // console.log("current user", currentUserId);
 
     const conversation = await getConversation(currentUserId);
-    // console.log(conversation,"hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-    
+    // console.log(conversation);
+
     socket.emit("conversation", conversation);
   });
 
@@ -154,15 +143,22 @@ io.on("connection", async (socket) => {
     });
 
     const conversationMessageId = conversation?.messages || [];
+    
+    
+    
+    
 
     const updateMessages = await MessageModel.updateMany(
       { _id: { $in: conversationMessageId }, msgByUserId: msgByUserId },
       { $set: { seen: true } }
     );
+      
 
     //send conversation
     const conversationSender = await getConversation(user?._id?.toString());
     const conversationReceiver = await getConversation(msgByUserId);
+    
+    
 
     io.to(user?._id?.toString()).emit("conversation", conversationSender);
     io.to(msgByUserId).emit("conversation", conversationReceiver);

@@ -129,7 +129,8 @@ const logoutUser = asyncHandler(async (req, res) => {
   //remove access token and refresh token
 
   const userId = req.user._id;
-
+  
+  
   await User.findByIdAndUpdate(
     userId,
     {

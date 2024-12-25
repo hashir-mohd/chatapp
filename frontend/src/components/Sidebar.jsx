@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { FiArrowUpLeft } from "react-icons/fi";
 import { logout } from "../features/userSlice";
 import "../index.css";
+import axios from "axios";
 
 
 function Sidebar() {
@@ -22,6 +23,14 @@ function Sidebar() {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const API = axios.create({
+    baseURL: "http://localhost:3000",
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
   const getRandomColor = () => {
     const colors = [
@@ -35,8 +44,12 @@ function Sidebar() {
     return colors[Math.floor(Math.random() * colors.length)];
   };
   
-  const handleLogout = () => {
+  const handleLogout = async () => {
     dispatch(logout());
+    const response = await API.post("/users/logout");
+    console.log("after logout");
+    
+    console.log(response);
     navigate("/login");
     localStorage.clear();
   };

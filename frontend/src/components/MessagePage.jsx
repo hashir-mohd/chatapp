@@ -101,11 +101,11 @@ const MessagePage = () => {
   return (
     <div
       style={{ backgroundImage: `url(${backgroundImage})` }}
-      className="bg-no-repeat bg-cover text-black"
+      className="bg-no-repeat bg-cover text-white"
     >
-      <header className="sticky top-0 h-16 bg-white tect-black flex justify-between items-center px-4">
+      <header className="sticky top-0 h-16 bg-gray-900 text-neonGreen flex justify-between items-center px-4">
         <div className="flex items-center gap-4">
-          <Link to={"/"} className="lg:hidden">
+          <Link to={"/"} className="lg:hidden text-neonGreen">
             <FaAngleLeft size={25} />
           </Link>
           <div>
@@ -115,52 +115,62 @@ const MessagePage = () => {
               imageUrl={dataUser?.profile_pic}
               username={dataUser?.username}
               userId={dataUser?._id}
-            ></div>
+              className="w-12 h-12 bg-gray-800 rounded-full flex justify-center items-center"
+            >
+              {dataUser?.profile_pic ? (
+                <img
+                  src={dataUser?.profile_pic}
+                  alt={dataUser?.username}
+                  className="w-full h-full object-cover rounded-full"
+                />
+              ) : (
+                dataUser?.username?.charAt(0)?.toUpperCase() || "U" // First letter of username or "U" if no username
+              )}
+            </div>
           </div>
           <div>
-            <h3 className="font-semibold text-black text-lg my-0 text-ellipsis line-clamp-1">
+            <h3 className="font-semibold text-neonGreen text-lg my-0 text-ellipsis line-clamp-1">
               {dataUser?.username}
             </h3>
             <p className="-my-2 text-sm">
               {dataUser.online ? (
-                <span className="text-primary">online</span>
+                <span className="text-neonGreen">online</span>
               ) : (
-                <span className="text-slate-400">offline</span>
+                <span className="text-gray-500">offline</span>
               )}
             </p>
           </div>
         </div>
 
         <div>
-          <button className="cursor-pointer hover:text-primary">
+          <button className="cursor-pointer hover:text-secondary text-neonGreen">
             <HiDotsVertical />
           </button>
         </div>
       </header>
 
-      {/***show all message */}
-      <section className="h-[calc(100vh-128px)] overflow-x-hidden overflow-y-scroll scrollbar relative bg-slate-200 bg-opacity-50">
-        {/**all message show here */}
+      {/*** Show All Messages */}
+      <section className="h-[calc(100vh-128px)] overflow-x-hidden overflow-y-scroll scrollbar relative bg-gray-800 bg-opacity-50">
         <div className="flex flex-col gap-2 py-2 mx-2" ref={currentMessage}>
           {allMessage &&
             allMessage.length > 0 &&
             allMessage.map((msg, index) => {
               return (
                 <div
-                  className={` p-1 py-1 rounded w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${
+                  key={index}
+                  className={`p-1 py-1 rounded w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${
                     user._id === msg?.msgByUserId
-                      ? "ml-auto bg-teal-200"
-                      : "bg-white"
+                      ? "ml-auto bg-teal-600 text-white"
+                      : "bg-gray-700 text-gray-300"
                   }`}
                 >
-                  
                   <p className="px-2 flex justify-center items-center">
                     {msg.text}
                     <div>
                       {user._id === msg?.msgByUserId ? (
                         msg.seen ? (
                           <p className="text-xs ml-auto w-fit flex items-center gap-1">
-                            <AiFillCheckCircle className="text-green-500" />
+                            <AiFillCheckCircle className="text-neonGreen" />
                           </p>
                         ) : (
                           <p className="text-xs ml-auto w-fit flex items-center gap-1">
@@ -173,7 +183,7 @@ const MessagePage = () => {
                     </div>
                   </p>
 
-                  <p className="text-xs ml-auto w-fit">
+                  <p className="text-xs ml-auto w-fit text-gray-400">
                     {moment(msg.createdAt).format("hh:mm")}
                   </p>
                 </div>
@@ -188,20 +198,20 @@ const MessagePage = () => {
         )}
       </section>
 
-      {/**send message */}
-      <section className="h-16 bg-white flex items-center px-4">
-        <div className="relative "></div>
+      {/** Send Message */}
+      <section className="h-16 bg-gray-900 flex items-center px-4">
+        <div className="relative"></div>
 
-        {/**input box */}
+        {/** Input Box */}
         <form className="h-full w-full flex gap-2" onSubmit={handleSendMessage}>
           <input
             type="text"
-            placeholder="Type here message..."
-            className="py-1 px-4 outline-none w-full h-full"
+            placeholder="Type your message..."
+            className="py-1 px-4 outline-none w-full h-full bg-gray-800 text-gray-300 placeholder-gray-500"
             value={message.text}
             onChange={handleOnChange}
           />
-          <button className="text-primary hover:text-secondary">
+          <button className="text-neonGreen hover:text-secondary">
             <IoMdSend size={28} />
           </button>
         </form>

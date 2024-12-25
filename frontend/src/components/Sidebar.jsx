@@ -10,6 +10,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FiArrowUpLeft } from "react-icons/fi";
 import { logout } from "../features/userSlice";
+import "../index.css";
 
 
 function Sidebar() {
@@ -21,6 +22,18 @@ function Sidebar() {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const getRandomColor = () => {
+    const colors = [
+      "#FF6B6B", // Red
+      "#6BCB77", // Green
+      "#4D96FF", // Blue
+      "#F7B32B", // Yellow
+      "#E5989B", // Pink
+      "#9C88FF", // Purple
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
   
   const handleLogout = () => {
     dispatch(logout());
@@ -62,34 +75,34 @@ function Sidebar() {
   }, [socketConnection, user]);
 
   return (
-    <div className="w-full h-full grid grid-cols-[48px,1fr] bg-white">
-      <div className="bg-slate-100 w-12 h-full rounded-tr-lg rounded-br-lg py-5 text-slate-600 flex flex-col justify-between">
-        <div>
+    <div className="w-full h-full grid grid-cols-[60px,1fr] bg-black">
+      {/* Sidebar */}
+      <div className="bg-gray-800 h-full py-5 text-gray-300 flex flex-col justify-between rounded-tr-lg rounded-br-lg">
+        <div className="space-y-3">
           <NavLink
             className={({ isActive }) =>
-              `w-12 h-12 flex justify-center items-center cursor-pointer hover:bg-slate-200 rounded ${
-                isActive && "bg-slate-200"
+              `w-12 h-12 flex justify-center items-center cursor-pointer hover:bg-neonGreen rounded ${
+                isActive && "bg-neonGreen text-black"
               }`
             }
-            title="chat"
+            title="Chat"
           >
             <IoChatbubbleEllipses size={20} />
           </NavLink>
 
           <div
-            title="add friend"
+            title="Add Friend"
             onClick={() => setOpenSearchUser(true)}
-            className="w-12 h-12 flex justify-center items-center cursor-pointer hover:bg-slate-200 rounded"
+            className="w-12 h-12 flex justify-center items-center cursor-pointer hover:bg-neonGreen rounded"
           >
             <FaUserPlus size={20} />
           </div>
         </div>
 
-        <div className="flex flex-col items-center">
-          
+        <div>
           <button
-            title="logout"
-            className="w-12 h-12 flex justify-center items-center cursor-pointer hover:bg-slate-200 rounded"
+            title="Logout"
+            className="w-12 h-12 flex justify-center items-center cursor-pointer hover:bg-neonGreen rounded"
             onClick={handleLogout}
           >
             <span className="-ml-2">
@@ -99,64 +112,70 @@ function Sidebar() {
         </div>
       </div>
 
-      <div className="w-full">
-        <div className="h-16 flex items-center">
-          <h2 className="text-xl font-bold p-4 text-slate-800">Message</h2>
+      {/* Main Content */}
+      <div className="w-full flex flex-col">
+        {/* Header */}
+        <div className="h-16 flex items-center bg-gray-900">
+          <h2 className="text-xl font-bold px-4 text-neonGreen">Messages</h2>
         </div>
-        <div className="bg-slate-200 p-[0.5px]"></div>
+        <div className="bg-gray-700 h-[1px]"></div>
 
-        <div className=" h-[calc(100vh-65px)] overflow-x-hidden overflow-y-auto scrollbar">
-          {allUser.length === 0 && (
-            <div className="mt-12">
-              <div className="flex justify-center items-center my-4 text-slate-500">
-                <FiArrowUpLeft size={50} />
-              </div>
-              <p className="text-lg text-center text-slate-400">
+        {/* Content Area */}
+        <div className="h-[calc(100vh-65px)] overflow-y-auto bg-gray-900 p-4 scrollbar">
+          {allUser.length === 0 ? (
+            <div className="flex flex-col items-center mt-12">
+              <FiArrowUpLeft size={50} className="text-neonGreen" />
+              <p className="text-lg text-center text-gray-500 mt-4">
                 Explore users to start a conversation with.
               </p>
             </div>
-          )}
-
-          {allUser.map((conv, index) => {
-            return (
+          ) : (
+            allUser.map((conv, index) => (
               <NavLink
                 to={"/" + conv?.userDetails?._id}
                 key={conv?._id}
-                className="flex items-center gap-2 py-3 px-2 border border-transparent hover:border-primary rounded hover:bg-slate-100 cursor-pointer"
+                className="flex items-center gap-3 py-3 px-3 border border-transparent hover:border-neonGreen rounded hover:bg-gray-800 cursor-pointer"
               >
                 <div>
-                  <div
-                    imageUrl={conv?.userDetails?.profile_pic}
-                    name={conv?.userDetails?.username}
-                    width={40}
-                    height={40}
-                  ></div>
+                  {conv?.userDetails?.profile_pic ? (
+                    <img
+                      src={conv.userDetails.profile_pic}
+                      alt={conv.userDetails.username}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold`}
+                      style={{
+                        backgroundColor: getRandomColor(conv?.userDetails?._id),
+                      }}
+                    >
+                      {conv?.userDetails?.username?.[0]?.toUpperCase() || "U"}
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <h3 className="text-ellipsis line-clamp-1 font-semibold text-base">
+                <div className="flex-1">
+                  <h3 className="text-ellipsis line-clamp-1 font-semibold text-base text-neonGreen">
                     {conv?.userDetails?.username}
                   </h3>
-                  <div className="text-slate-500 text-xs flex items-center gap-1">
-                    <div className="flex items-center gap-1">
-                      
-                    </div>
+                  <div className="text-gray-400 text-xs">
                     <p className="text-ellipsis line-clamp-1">
                       {conv?.lastMsg?.text}
                     </p>
                   </div>
                 </div>
                 {Boolean(conv?.unseenMsg) && (
-                  <p className="text-xs bg-black w-6 h-6 flex justify-center items-center ml-auto p-1 bg-primary text-white font-semibold rounded-full">
+                  <div className="text-xs bg-neonGreen w-6 h-6 flex justify-center items-center ml-auto text-black font-semibold rounded-full">
                     {conv?.unseenMsg}
-                  </p>
+                  </div>
                 )}
               </NavLink>
-            );
-          })}
+            ))
+          )}
         </div>
       </div>
 
-      {/**search user */}
+      {/* Search User Modal */}
       {openSearchUser && (
         <SearchUser onClose={() => setOpenSearchUser(false)} />
       )}

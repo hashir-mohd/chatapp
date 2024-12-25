@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+:root {
+  --neonGreen: #39ff14; /* Neon green color */
+}
+
+.bg-neonGreen {
+  background-color: var(--neonGreen);
+}
+
+.text-neonGreen {
+  color: var(--neonGreen);
+}
+
+.hover\\:bg-neonGreen:hover {
+  background-color: var(--neonGreen);
+}
+
+.hover\\:border-neonGreen:hover {
+  border-color: var(--neonGreen);
+}
